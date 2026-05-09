@@ -1,3 +1,5 @@
+#include <cstdio>
+#include <bits/getopt_core.h>
 #include <cstdint>
 #include <format>
 #include <regex>
@@ -27,7 +29,8 @@ static void help() {
               << " -l | --lowercase-hex       | Outputs the hexcode in lowercase\n"
               << " -s | --scale=scale         | Set the zoom scale (between 1 and 10)\n"
               << " -u | --radius=radius       | Set the circle radius (between 1 and 1000)\n"
-              << " -V | --version             | Print version info\n";
+              << " -V | --version             | Print version info\n"
+              << " -F | --font=font           | Set the font to use\n";
 }
 
 int main(int argc, char** argv, char** envp) {
@@ -52,9 +55,10 @@ int main(int argc, char** argv, char** envp) {
                                                {"version", no_argument, nullptr, 'V'},
                                                {"scale", required_argument, nullptr, 's'},
                                                {"radius", required_argument, nullptr, 'u'},
+                                               {"font", required_argument, nullptr, 'F'},
                                                {nullptr, 0, nullptr, 0}};
 
-        int                  c = getopt_long(argc, argv, ":f:o:hnbarzqvtdlcVs:u:", long_options, &option_index);
+        int                  c = getopt_long(argc, argv, ":f:o:hnbarzqvtdlcVs:u:F:", long_options, &option_index);
         if (c == -1)
             break;
 
@@ -105,7 +109,7 @@ int main(int argc, char** argv, char** envp) {
                     exit(1);
                 }
 #else
-                auto  result = std::from_chars(optarg, optarg + strlen(optarg), value);
+                auto result = std::from_chars(optarg, optarg + strlen(optarg), value);
 
                 if (result.ec != std::errc() || result.ptr != optarg + strlen(optarg)) {
                     std::cerr << "Invalid scale value: " << optarg << "\n";
@@ -137,6 +141,10 @@ int main(int argc, char** argv, char** envp) {
                 }
 
                 g_pHyprpicker->m_iCircleRadius = value;
+                break;
+            }
+            case 'F': {
+                g_pHyprpicker->m_sFont = optarg;
                 break;
             }
             default: help(); exit(1);

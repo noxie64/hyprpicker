@@ -43,6 +43,8 @@ class CHyprpicker {
     eOutputMode                                 m_bSelectedOutputMode = OUTPUT_HEX;
     std::string                                 m_sOutputFormat       = "";
 
+    const char*                                 m_sFont;
+
     bool                                        m_bFancyOutput = true;
 
     bool                                        m_bAutoCopy       = false;
