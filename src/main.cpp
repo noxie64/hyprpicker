@@ -1,36 +1,44 @@
+#include <cairo.h>
 #include <cstdio>
 #include <bits/getopt_core.h>
 #include <cstdint>
+#include <cstdlib>
+#include <cstring>
 #include <format>
 #include <regex>
 #include <charconv>
+#include <sstream>
+#include <stdexcept>
+#include <string>
 #include <strings.h>
 
 #include <iostream>
+#include <vector>
 
 #include "hyprpicker.hpp"
 #include "src/debug/Log.hpp"
 
 static void help() {
     std::cout << "Hyprpicker usage: hyprpicker [arg [...]].\n\nArguments:\n"
-              << " -a | --autocopy            | Automatically copies the output to the clipboard (requires wl-clipboard)\n"
-              << " -f | --format=fmt          | Specifies the output format (cmyk, hex, rgb, hsl, hsv)\n"
-              << " -o | --output-format=fmt   | Specifies how the output color should be formatted e.g. rgb({0}, {1}, {2}) would output rgb(red, green, blue) if --format=rgb\n"
-              << " -n | --notify              | Sends a desktop notification when a color is picked (requires notify-send and a notification daemon like dunst)\n"
-              << " -b | --no-fancy            | Disables the \"fancy\" (aka. colored) outputting\n"
-              << " -h | --help                | Show this help message\n"
-              << " -r | --render-inactive     | Render (freeze) inactive displays\n"
-              << " -z | --no-zoom             | Disable the zoom lens\n"
-              << " -q | --quiet               | Disable most logs (leaves errors)\n"
-              << " -v | --verbose             | Enable more logs\n"
-              << " -t | --no-fractional       | Disable fractional scaling support\n"
-              << " -d | --disable-preview     | Disable live preview of color\n"
-              << " -c | --cursor              | Include cursor in the frozen preview\n"
-              << " -l | --lowercase-hex       | Outputs the hexcode in lowercase\n"
-              << " -s | --scale=scale         | Set the zoom scale (between 1 and 10)\n"
-              << " -u | --radius=radius       | Set the circle radius (between 1 and 1000)\n"
-              << " -V | --version             | Print version info\n"
-              << " -F | --font=font           | Set the font to use\n";
+              << " -a | --autocopy                         | Automatically copies the output to the clipboard (requires wl-clipboard)\n"
+              << " -f | --format=fmt                       | Specifies the output format (cmyk, hex, rgb, hsl, hsv)\n"
+              << " -o | --output-format=fmt                | Specifies how the output color should be formatted e.g. rgb({0}, {1}, {2}) would output rgb(red, green, blue) if "
+                 "--format=rgb\n"
+              << " -n | --notify                           | Sends a desktop notification when a color is picked (requires notify-send and a notification daemon like dunst)\n"
+              << " -b | --no-fancy                         | Disables the \"fancy\" (aka. colored) outputting\n"
+              << " -h | --help                             | Show this help message\n"
+              << " -r | --render-inactive                  | Render (freeze) inactive displays\n"
+              << " -z | --no-zoom                          | Disable the zoom lens\n"
+              << " -q | --quiet                            | Disable most logs (leaves errors)\n"
+              << " -v | --verbose                          | Enable more logs\n"
+              << " -t | --no-fractional                    | Disable fractional scaling support\n"
+              << " -d | --disable-preview                  | Disable live preview of color\n"
+              << " -c | --cursor                           | Include cursor in the frozen preview\n"
+              << " -l | --lowercase-hex                    | Outputs the hexcode in lowercase\n"
+              << " -s | --scale=scale                      | Set the zoom scale (between 1 and 10)\n"
+              << " -u | --radius=radius                    | Set the circle radius (between 1 and 1000)\n"
+              << " -V | --version                          | Print version info\n"
+              << " -F | --font=font,{bold|normal},size}    | Set the font to use\n";
 }
 
 int main(int argc, char** argv, char** envp) {
@@ -144,7 +152,44 @@ int main(int argc, char** argv, char** envp) {
                 break;
             }
             case 'F': {
-                g_pHyprpicker->m_sFont = optarg;
+                std::vector<std::string> tokens;
+                std::istringstream       stream(optarg);
+                std::string              token;
+
+                while (std::getline(stream, token, ',')) {
+                    tokens.push_back(token);
+                }
+
+                if (tokens.size() > 3) {
+                    std::cerr << "Invalid font-value!\n";
+                }
+
+                g_pHyprpicker->m_sFont = tokens[0].c_str();
+
+                if (tokens.size() >= 2) {
+                    const std::string& weight = tokens[1];
+                    if (weight == "bold") {
+                        g_pHyprpicker->m_cWeight = CAIRO_FONT_WEIGHT_BOLD;
+                    } else if (weight == "normal") {
+                        g_pHyprpicker->m_cWeight = CAIRO_FONT_WEIGHT_NORMAL;
+                    } else {
+                        std::cerr << "Invalid weight-value!\n";
+                    }
+                }
+
+                if (tokens.size() == 3) {
+                    try {
+                        int size = std::atoi(tokens[2].c_str());
+
+                        if (size < 1) {
+                            std::cerr << "Invalid size-value!\n";
+                            break;
+                        }
+                    } catch (std::logic_error& e) {
+                        std::cerr << "Invalid size value!\n";
+                        break;
+                    }
+                }
                 break;
             }
             default: help(); exit(1);

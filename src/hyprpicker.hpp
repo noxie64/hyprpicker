@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cairo.h>
 #include <mutex>
 #include "defines.hpp"
 #include "helpers/LayerSurface.hpp"
@@ -43,7 +44,9 @@ class CHyprpicker {
     eOutputMode                                 m_bSelectedOutputMode = OUTPUT_HEX;
     std::string                                 m_sOutputFormat       = "";
 
-    const char*                                 m_sFont;
+    const char*                                 m_sFont   = "monospace";
+    cairo_font_weight_t                         m_cWeight = CAIRO_FONT_WEIGHT_NORMAL;
+    int                                         m_iSize   = 18;
 
     bool                                        m_bFancyOutput = true;
 
