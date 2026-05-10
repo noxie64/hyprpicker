@@ -46,7 +46,6 @@ class CHyprpicker {
 
     const char*                                 m_sFont   = "monospace\0";
     cairo_font_weight_t                         m_cWeight = CAIRO_FONT_WEIGHT_NORMAL;
-    int                                         m_iSize   = 18;
 
     bool                                        m_bFancyOutput = true;
 

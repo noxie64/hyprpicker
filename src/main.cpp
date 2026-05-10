@@ -19,25 +19,25 @@
 
 static void help() {
     std::cout << "Hyprpicker usage: hyprpicker [arg [...]].\n\nArguments:\n"
-              << " -a | --autocopy                         | Automatically copies the output to the clipboard (requires wl-clipboard)\n"
-              << " -f | --format=fmt                       | Specifies the output format (cmyk, hex, rgb, hsl, hsv)\n"
-              << " -o | --output-format=fmt                | Specifies how the output color should be formatted e.g. rgb({0}, {1}, {2}) would output rgb(red, green, blue) if "
+              << " -a | --autocopy                   | Automatically copies the output to the clipboard (requires wl-clipboard)\n"
+              << " -f | --format=fmt                 | Specifies the output format (cmyk, hex, rgb, hsl, hsv)\n"
+              << " -o | --output-format=fmt          | Specifies how the output color should be formatted e.g. rgb({0}, {1}, {2}) would output rgb(red, green, blue) if "
                  "--format=rgb\n"
-              << " -n | --notify                           | Sends a desktop notification when a color is picked (requires notify-send and a notification daemon like dunst)\n"
-              << " -b | --no-fancy                         | Disables the \"fancy\" (aka. colored) outputting\n"
-              << " -h | --help                             | Show this help message\n"
-              << " -r | --render-inactive                  | Render (freeze) inactive displays\n"
-              << " -z | --no-zoom                          | Disable the zoom lens\n"
-              << " -q | --quiet                            | Disable most logs (leaves errors)\n"
-              << " -v | --verbose                          | Enable more logs\n"
-              << " -t | --no-fractional                    | Disable fractional scaling support\n"
-              << " -d | --disable-preview                  | Disable live preview of color\n"
-              << " -c | --cursor                           | Include cursor in the frozen preview\n"
-              << " -l | --lowercase-hex                    | Outputs the hexcode in lowercase\n"
-              << " -s | --scale=scale                      | Set the zoom scale (between 1 and 10)\n"
-              << " -u | --radius=radius                    | Set the circle radius (between 1 and 1000)\n"
-              << " -V | --version                          | Print version info\n"
-              << " -F | --font=font,{bold|normal},size}    | Set the font to use\n";
+              << " -n | --notify                     | Sends a desktop notification when a color is picked (requires notify-send and a notification daemon like dunst)\n"
+              << " -b | --no-fancy                   | Disables the \"fancy\" (aka. colored) outputting\n"
+              << " -h | --help                       | Show this help message\n"
+              << " -r | --render-inactive            | Render (freeze) inactive displays\n"
+              << " -z | --no-zoom                    | Disable the zoom lens\n"
+              << " -q | --quiet                      | Disable most logs (leaves errors)\n"
+              << " -v | --verbose                    | Enable more logs\n"
+              << " -t | --no-fractional              | Disable fractional scaling support\n"
+              << " -d | --disable-preview            | Disable live preview of color\n"
+              << " -c | --cursor                     | Include cursor in the frozen preview\n"
+              << " -l | --lowercase-hex              | Outputs the hexcode in lowercase\n"
+              << " -s | --scale=scale                | Set the zoom scale (between 1 and 10)\n"
+              << " -u | --radius=radius              | Set the circle radius (between 1 and 1000)\n"
+              << " -V | --version                    | Print version info\n"
+              << " -F | --font=font,{bold|normal}    | Set the font to use\n";
 }
 
 int main(int argc, char** argv, char** envp) {
@@ -159,14 +159,14 @@ int main(int argc, char** argv, char** envp) {
                     tokens.push_back(token);
                 }
 
-                if (tokens.size() > 3) {
+                if (tokens.size() > 2) {
                     std::cerr << "Invalid font-value!\n";
                     exit(1);
                 }
 
                 g_pHyprpicker->m_sFont = strdup(tokens[0].c_str());
 
-                if (tokens.size() >= 2) {
+                if (tokens.size() == 2) {
                     const std::string& weight = tokens[1];
                     if (weight == "bold") {
                         g_pHyprpicker->m_cWeight = CAIRO_FONT_WEIGHT_BOLD;
@@ -174,22 +174,6 @@ int main(int argc, char** argv, char** envp) {
                         g_pHyprpicker->m_cWeight = CAIRO_FONT_WEIGHT_NORMAL;
                     } else {
                         std::cerr << "Invalid weight-value!\n";
-                        exit(1);
-                    }
-                }
-
-                if (tokens.size() == 3) {
-                    try {
-                        int size = std::atoi(tokens[2].c_str());
-
-                        if (size < 1) {
-                            std::cerr << "Invalid size-value!\n";
-                            exit(1);
-                        }
-
-                        g_pHyprpicker->m_iSize = size;
-                    } catch (std::logic_error& e) {
-                        std::cerr << "Invalid size value!\n";
                         exit(1);
                     }
                 }
