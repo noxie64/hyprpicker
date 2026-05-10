@@ -44,7 +44,7 @@ class CHyprpicker {
     eOutputMode                                 m_bSelectedOutputMode = OUTPUT_HEX;
     std::string                                 m_sOutputFormat       = "";
 
-    const char*                                 m_sFont   = "monospace";
+    const char*                                 m_sFont   = "monospace\0";
     cairo_font_weight_t                         m_cWeight = CAIRO_FONT_WEIGHT_NORMAL;
     int                                         m_iSize   = 18;
 

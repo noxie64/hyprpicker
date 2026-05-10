@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <format>
-#include <regex>
 #include <charconv>
 #include <sstream>
 #include <stdexcept>
@@ -162,9 +161,10 @@ int main(int argc, char** argv, char** envp) {
 
                 if (tokens.size() > 3) {
                     std::cerr << "Invalid font-value!\n";
+                    exit(1);
                 }
 
-                g_pHyprpicker->m_sFont = tokens[0].c_str();
+                g_pHyprpicker->m_sFont = strdup(tokens[0].c_str());
 
                 if (tokens.size() >= 2) {
                     const std::string& weight = tokens[1];
@@ -174,6 +174,7 @@ int main(int argc, char** argv, char** envp) {
                         g_pHyprpicker->m_cWeight = CAIRO_FONT_WEIGHT_NORMAL;
                     } else {
                         std::cerr << "Invalid weight-value!\n";
+                        exit(1);
                     }
                 }
 
@@ -183,11 +184,13 @@ int main(int argc, char** argv, char** envp) {
 
                         if (size < 1) {
                             std::cerr << "Invalid size-value!\n";
-                            break;
+                            exit(1);
                         }
+
+                        g_pHyprpicker->m_iSize = size;
                     } catch (std::logic_error& e) {
                         std::cerr << "Invalid size value!\n";
-                        break;
+                        exit(1);
                     }
                 }
                 break;

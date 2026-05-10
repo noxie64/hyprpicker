@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <format>
+#include <iostream>
 #include <mutex>
 #include <hyprutils/math/Vector2D.hpp>
 #include <wayland-client-protocol.h>
